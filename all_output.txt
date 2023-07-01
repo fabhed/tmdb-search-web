@@ -1,0 +1,121 @@
+Let's start by defining the architecture of our application. We will have a frontend built with React and a backend built with Express.js. The backend will be responsible for making requests to the TMDB API and serving the frontend files.
+
+Here are the core files and their purposes:
+
+1. `package.json`: This file will contain the project metadata and dependencies.
+2. `server.js`: This is the entry point of our application. It will start the Express server and serve the frontend files.
+3. `public/index.html`: This is the main HTML file for our React application.
+4. `public/script.js`: This is the main JavaScript file for our React application. It will contain the logic for the search box and autocomplete feature.
+5. `public/style.css`: This file will contain the CSS styles for our application.
+6. `.env`: This file will contain environment variables, such as the TMDB API key.
+
+Now, let's write the code for each file.
+
+`package.json`
+```json
+{
+  "name": "tmdb-search",
+  "version": "1.0.0",
+  "description": "A website with a search box that connects to the TMDB API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "dotenv": "^8.2.0",
+    "axios": "^0.21.1"
+  }
+}
+```
+
+`server.js`
+```javascript
+const express = require('express');
+const axios = require('axios');
+require('dotenv').config();
+
+const app = express();
+const port = 8000;
+
+app.use(express.static('public'));
+
+app.get('/search', async (req, res) => {
+  const query = req.query.q;
+  const response = await axios.get(`https://api.themoviedb.org/3/search/tv?api_key=${process.env.TMDB_API_KEY}&query=${query}`);
+  res.json(response.data.results);
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+```
+
+`public/index.html`
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TMDB Search</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <input type="text" id="search" placeholder="Search for a TV show">
+    <div id="results"></div>
+  </div>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
+```
+
+`public/script.js`
+```javascript
+const search = document.getElementById('search');
+const results = document.getElementById('results');
+
+search.addEventListener('input', async () => {
+  const query = search.value;
+  const response = await axios.get(`/search?q=${query}`);
+  results.innerHTML = '';
+  response.data.forEach(show => {
+    const div = document.createElement('div');
+    div.textContent = show.name;
+    results.appendChild(div);
+  });
+});
+```
+
+`public/style.css`
+```css
+body {
+  font-family: Arial, sans-serif;
+}
+
+#app {
+  width: 600px;
+  margin: 0 auto;
+}
+
+#search {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+}
+
+#results {
+  margin-top: 20px;
+}
+```
+
+`.env`
+```env
+TMDB_API_KEY=your_tmdb_api_key
+```
+
+Please replace `your_tmdb_api_key` with your actual TMDB API key.
+
+To run the application, first install the dependencies with `npm install`, then start the server with `npm start`. The application will be available at `http://localhost:8000`.

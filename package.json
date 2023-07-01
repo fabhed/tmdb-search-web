@@ -1,0 +1,14 @@
+{
+  "name": "tmdb-search",
+  "version": "1.0.0",
+  "description": "A website with a search box that connects to the TMDB API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "dotenv": "^8.2.0",
+    "axios": "^0.21.1"
+  }
+}
